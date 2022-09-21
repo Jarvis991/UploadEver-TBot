@@ -1,8 +1,10 @@
 #Copyright 2022-present, Author: 5MysterySD
 
+from os import remove as orem
 from re import findall
+from pathlib import Path
 from requests import get as rget
-from config import LOGGER, USERS_API
+from config import LOGGER, USERS_API, Config
 from bot.client import Client
 from pyrogram import filters, enums
 from pyrogram.types import Message
@@ -53,7 +55,7 @@ async def _bulkCloneLinks(c: Client, m: Message):
         await m.reply_text(text="🖇 <b><i>Give a UploadEver.in Link to Clone or Reply to Any Message Containing UploadEver.in Links !!</i></b>", parse_mode=enums.ParseMode.HTML, quote=True)
         return
     if rpyMSG.photo:
-        _rpyPhoto = rpyMSG.download()
+        _rpyPhoto = rpyMSG.download(file_name=f"{Path('./').resolve()}/{Config.DIRECTORY}photos/")
         _txtLinks = rpyMSG.caption
     else: _txtLinks = rpyMSG.text
     _retxt = findall(r'https?://uploadever\.in\S+', _txtLinks)
@@ -62,7 +64,7 @@ async def _bulkCloneLinks(c: Client, m: Message):
     Token = USERS_API.get(m.chat.id, None)
     if Token is None:
         await m.reply_text(text="<b>😬 I see, you have not Login, Do <i>/login</i> to Use this Command. </b>", parse_mode=enums.ParseMode.HTML, quote=True)
-
+        return
     for no, link in enumerate(_retxt, 1):
         filecode = (link.split("/"))[-1]
         resp = rget(f"https://uploadever.in/api/file/clone?file_code={filecode}&key={Token}")
@@ -74,6 +76,7 @@ async def _bulkCloneLinks(c: Client, m: Message):
             _txtLinks = _txtLinks.replace(link, "")
     if rpyMSG.photo: await m.reply_photo(photo=_rpyPhoto, caption=_txtLinks, quote=True)
     else: await m.reply_text(_txtLinks, quote=True, disable_web_page_preview=True)
+    orem(_rpyPhoto)
 
 
 
