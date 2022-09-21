@@ -49,10 +49,13 @@ async def _bulkCloneLinks(c: Client, m: Message):
     '''
 
     rpyMSG = m.reply_to_message
-    if not rpyMSG: 
+    if not rpyMSG:
         await m.reply_text(text="🖇 <b><i>Give a UploadEver.in Link to Clone or Reply to Any Message Containing UploadEver.in Links !!</i></b>", parse_mode=enums.ParseMode.HTML, quote=True)
         return
-    _txtLinks = rpyMSG.caption if rpyMSG.photo else rpyMSG.text
+    if rpyMSG.photo:
+        _rpyPhoto = rpyMSG.download()
+        _txtLinks = rpyMSG.caption
+    else: _txtLinks = rpyMSG.text
     _retxt = findall(r'https?://uploadever\.in\S+', _txtLinks)
     
     LOGGER.info(f"[BULK] Clone Links : {len(_retxt)}")
@@ -69,9 +72,8 @@ async def _bulkCloneLinks(c: Client, m: Message):
         else:
             await m.reply_text(f"⛔️ <b>ERROR: (Link No.: {no})</b> <code>{jdata['msg']}</code>", quote=True)
             _txtLinks = _txtLinks.replace(link, "")
-    #if rpyMSG.photo:
-    #    await m.reply_photo(photo=??, caption=_txtLinks, quote=True)
-    await m.reply_text(_txtLinks, quote=True)
+    if rpyMSG.photo: await m.reply_photo(photo=_rpyPhoto, caption=_txtLinks, quote=True)
+    else: await m.reply_text(_txtLinks, quote=True, disable_web_page_preview=True)
 
 
 
