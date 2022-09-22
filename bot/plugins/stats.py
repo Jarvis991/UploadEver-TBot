@@ -5,7 +5,8 @@ from pyrogram import filters, enums
 from pyrogram.types import Message
 
 from bot.client import Client
-from config import LOGGER, USERS_API
+from bot.core.db.db_func import db
+from config import LOGGER
 from bot.core.display import convertBytes
 
 @Client.on_message(filters.command("stats") & filters.private)
@@ -36,7 +37,7 @@ async def stats_handler(c: Client, m: Message):
     }
     '''
 
-    Token = USERS_API.get(m.chat.id, None)
+    Token = await db._getUserToken(m.chat.id)
     if Token is None:
         text_ = "<b>😬 I see, you have not Login, Do <i>/login</i> to Use this Command. </b>"
     else:
