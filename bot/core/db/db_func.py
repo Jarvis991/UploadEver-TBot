@@ -1,5 +1,6 @@
 #Copyright 2022-present, Authors: @AbirHasan2005 & 5MysterySD
 
+import asyncio
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import Config, LOGGER, USERS_API
 from bot.client import Client
@@ -12,7 +13,7 @@ class Database:
         self.col = self.db.users
 
     async def db_load(self):
-        all_users = await db._getAllUsers()
+        all_users = await self._getAllUsers()
         async for user in all_users:
             USERS_API[user['id']] = user['token']
         LOGGER.info('[MongoDB] User Data Imported from Database')
@@ -53,6 +54,7 @@ class Database:
         return user or None
 
 db = Database(Config.MONGODB_URI, "UploadEver-TBot")
+asyncio.run(db.db_load())
 
 async def _addNewUserToDB(c: Client, m: Message):
     if not await db._isUserExists(m.from_user.id):
