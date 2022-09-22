@@ -87,8 +87,8 @@ async def upload_file_handler(c: Client, m: Message):
             _newFileName = f"{Path('./').resolve()}/{Config.DIRECTORY}/{newname}"
             orename(__downLocation, _newFileName)
         await input_msg.delete()
-    except Exception as err:
-        LOGGER.error(f'New FileName Error :{err}')
+    except Exception:
+        pass
 
     await downMSG.edit(f"🔍 <b>Found a UploadEver Server for Taking Requests !!</b>\n\n 📤 <b>Media Downloaded, Uploading...</b>", parse_mode=enums.ParseMode.HTML)
     
