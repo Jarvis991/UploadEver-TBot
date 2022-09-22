@@ -3,6 +3,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import Config, LOGGER, USERS_API
 from bot.client import Client
+from pyrogram import enums
 from pyrogram.types import Message
 
 class Database:
