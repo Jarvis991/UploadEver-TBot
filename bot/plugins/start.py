@@ -3,6 +3,7 @@
 from time import time
 from config import BOT_UPTIME
 from bot.core.display import convertTime
+from bot.core.db.db_func import _addNewUserToDB
 from bot.client import Client
 from pyrogram import filters, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
@@ -10,7 +11,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 @Client.on_message(filters.command("start") & filters.private)
 async def start_handler(c: Client, m: Message):
     ''' Start Message of the Bot !!'''
-
+    await _addNewUserToDB(c, m)
     await m.reply_photo(photo='https://te.legra.ph/file/fff361f8f1019fa5162f9.jpg',
         caption='''<b>🔰 Hello, I am UploadEver.in Uploader and Multi-Tasking Bot! 🔰</b>
 
