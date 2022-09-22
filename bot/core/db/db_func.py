@@ -31,9 +31,7 @@ class Database:
         return count
 
     async def _getAllUsers(self):
-        dbData = self.col.find({})
-        LOGGER.info(dbData)
-        return dbData
+        return self.col.find({})
 
     async def _deleteUser(self, user_id):
         await self.col.delete_many({'id': int(user_id)})
@@ -55,8 +53,9 @@ db = Database(Config.MONGODB_URI, "UploadEver-TBot")
 async def _addNewUserToDB(c: Client, m: Message):
     if not await db._isUserExists(m.from_user.id):
         await db._addUser(m.from_user.id)
+        LOGGER.info(await db._getAllUsers)
         if Config.LOG_CHANNEL is not None:
             await c.send_message(
                 int(Config.LOG_CHANNEL),
-                f"#NEW_USER: \n\nNew User [{m.from_user.first_name}](tg://user?id={cmd.from_user.id}) !!"
+                f"#NEW_USER: \n\nNew User [{m.from_user.first_name}](tg://user?id={m.from_user.id}) !!"
             )
