@@ -2,6 +2,7 @@
 
 import os
 import logging
+from time import time
 from logging.handlers import RotatingFileHandler
 
 # Logging >>>
@@ -22,6 +23,7 @@ LOGGER = logging.getLogger(__name__)
 
 # Initial >>>
 USERS_API = {}
+BOT_UPTIME = time()
 
 # Invoke Data >>>
 class Config:
