@@ -5,7 +5,7 @@ from requests import get as rget
 from config import LOGGER, USERS_API, Config
 from bot.client import Client
 from pyrogram import filters, enums
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 @Client.on_message(filters.regex(r'^https?://uploadever\.in\S+') & filters.private)
 async def _cloneUploadEverLinks(c: Client, m: Message):
@@ -37,7 +37,7 @@ async def _cloneUploadEverLinks(c: Client, m: Message):
             text_ = f"<b>🔗 Generated Cloned URL:</b> <code>{jdata['result']['url']}</code>"
         else: text_ = jdata['msg']
 
-    await m.reply_text(text=text_, parse_mode=enums.ParseMode.HTML, quote=True)
+    await m.reply_text(text=text_, parse_mode=enums.ParseMode.HTML, quote=True, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔗 UploadEver URL", url=jdata['result']['url'])]]))
 
 
 @Client.on_message(filters.command("bulklinks") & filters.private)
@@ -52,9 +52,22 @@ async def _bulkCloneLinks(c: Client, m: Message):
     if not rpyMSG:
         await m.reply_text(text="🖇 <b><i>Give a UploadEver.in Link to Clone or Reply to Any Message Containing UploadEver.in Links !!</i></b>", parse_mode=enums.ParseMode.HTML, quote=True)
         return
-    if rpyMSG.photo:
+    if rpyMSG.media:
         _txtLinks = rpyMSG.caption
-    else: _txtLinks = rpyMSG.text
+        _formatTxt = rpyMSG.caption_entities
+    else: 
+        _txtLinks = rpyMSG.text
+        _formatTxt = rpyMSG.entities
+    _inlineKey = None
+    if hasattr(rpyMSG, 'inline_keyboard'):
+        rowBtn = []
+        for rows in rpyMSG.inline_keyboard:
+            clmBtn = []
+            for btn in rows:
+                clmBtn.append(InlineKeyboardButton(btn['text'], url=btn['url']))
+            rowBtn.extend([clmBtn])
+        _inlineKey = InlineKeyboardMarkup(rowBtn)
+
     _retxt = findall(r'https?://uploadever\.in\S+', _txtLinks)
     
     LOGGER.info(f"[BULK] Clone Links : {len(_retxt)}")
@@ -71,8 +84,10 @@ async def _bulkCloneLinks(c: Client, m: Message):
         else:
             await m.reply_text(f"⛔️ <b>ERROR: (Link No.: {no})</b> <code>{jdata['msg']}</code>", quote=True)
             _txtLinks = _txtLinks.replace(link, "")
-    if rpyMSG.media: await rpyMSG.copy(chat_id=m.chat.id, caption=_txtLinks)
-    else: await m.reply_text(_txtLinks, quote=True, disable_web_page_preview=True)
+    if rpyMSG.media: 
+        await rpyMSG.copy(chat_id=m.chat.id, caption=_txtLinks, caption_entities=_formatTxt, reply_markup=_inlineKey)
+    else: 
+        await m.reply_text(_txtLinks, entities=_formatTxt, quote=True, disable_web_page_preview=True, reply_markup=_inlineKey)
 
 
 
