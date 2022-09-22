@@ -51,7 +51,10 @@ class Database:
 db = Database(Config.MONGODB_URI, "UploadEver-TBot")
 
 async def _addNewUserToDB(c: Client, m: Message):
-    LOGGER.info(await db._getAllUsers())
+    all_users = await db._getAllUsers()
+    async for user in all_users:
+        LOGGER.info(user['id'])
+    LOGGER.info(await db._isUserExists(m.from_user.id))
     if not await db._isUserExists(m.from_user.id):
         await db._addUser(m.from_user.id)
         if Config.LOG_CHANNEL is not None:
