@@ -12,13 +12,13 @@ def convertBytes(sz) -> str:
 
 
 def convertTime(mss: int) -> str:
-    s, ms = divmod(int(mss), 1000)
+    s, ms = divmod(mss, 1000)
     m, s = divmod(s, 60)
     hr, m = divmod(m, 60)
     days, hr = divmod(hr, 24)
-    convertedTime = f"{days} days, " if days else "" + \
-          f"{hr} hours, " if hr else "" + \
-          f"{m} min, " if m else "" + \
-          f"{s} sec, " if s else "" + \
-          f"{ms} msec, " if ms else ""
+    convertedTime = (f"{days}d, " if days else "") + \
+          (f"{hr}h, " if hr else "") + \
+          (f"{m}m, " if m else "") + \
+          (f"{s}s, " if s else "") + \
+          (f"{ms}ms, " if ms else "")
     return convertedTime[:-2]
