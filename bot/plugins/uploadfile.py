@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from time import time
+from os import path as opath, remove as oremove, rename as orename
 from subprocess import check_output
 from asyncio import sleep as asleep
 from requests import get as rget
@@ -76,15 +77,28 @@ async def upload_file_handler(c: Client, m: Message):
         LOGGER.error(err)
         return
     LOGGER.info(f"[TG Upload] User: {m.chat.id} File Location: {__downLocation}")
+
+    try:
+        await downMSG.edit(f"🔍 <b>Found a UploadEver Server for Taking Requests !!</b>\n\n  📤 <b>Media Downloaded...</b>\n\n <i>Now Send Me Newfile Name (Optional)</i>", parse_mode=enums.ParseMode.HTML)
+        input_msg: Message = await c.listen(m.chat.id)
+        newname = input_msg.text
+        if newname is not None:
+            _newFileName = f"{Path('./').resolve()}/{Config.DIRECTORY}/{newname}"
+            orename(__downLocation, _newFileName)
+        else: _newFileName = __downLocation
+        await input_msg.delete()
+    except Exception as err:
+        LOGGER.error(f'New FileName Error :{err}')
+
     await downMSG.edit(f"🔍 <b>Found a UploadEver Server for Taking Requests !!</b>\n\n 📤 <b>Media Downloaded, Uploading...</b>", parse_mode=enums.ParseMode.HTML)
     
-    UpData = check_output(f"curl -F 'sess_id={SESS_ID}' -F 'file_0=@{__downLocation}' {UP_SER_URL}", shell=True).decode('utf-8')
+    UpData = check_output(f"curl -F 'sess_id={SESS_ID}' -F 'file_0=@{_newFileName}' {UP_SER_URL}", shell=True).decode('utf-8')
     await downMSG.delete()
     filecode = UpData.strip(']}{[').replace(":", ",").replace('"', '').split(',')
     URL = f"https://uploadever.in/{filecode[1]}"
     await m.reply_text(text=f'''📈 <b>Upload Completed</b> 📉
 
-📨 <b>FileName :</b> <code>{file_name}</code>
+📨 <b>FileName :</b> <code>{opath.basename(_newFileName)}</code>
 
 📋 <b>Type :</b> <code>{mime_type}</code>
 📦 <b>Size :</b> <code>{convertBytes(file_size)}</code>
@@ -97,3 +111,4 @@ async def upload_file_handler(c: Client, m: Message):
             [InlineKeyboardButton("📎 UploadEver URL", url=URL)]
         ])
      )
+     oremove(_newFileName)
