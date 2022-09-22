@@ -79,8 +79,8 @@ async def upload_file_handler(c: Client, m: Message):
     LOGGER.info(f"[TG Upload] User: {m.chat.id} File Location: {__downLocation}")
 
     try:
-        await downMSG.edit(f"🔍 <b>Found a UploadEver Server for Taking Requests !!</b>\n\n  📤 <b>Media Downloaded...</b>\n\n <i>Now Send Me Newfile Name (Optional)</i>", parse_mode=enums.ParseMode.HTML)
-        input_msg: Message = await c.listen(m.chat.id)
+        await downMSG.edit(f"🔍 <b>Found a UploadEver Server for Taking Requests !!</b>\n\n  📤 <b>Media Downloaded...</b>\n\n ✏️<i>Now Send Me Newfile Name <b>(Optional) (30 sec Timeout)</b></i>", parse_mode=enums.ParseMode.HTML)
+        input_msg: Message = await c.listen(chat_id=m.chat.id, filters=filters.text, timeout=30)
         newname = input_msg.text
         if newname is not None:
             _newFileName = f"{Path('./').resolve()}/{Config.DIRECTORY}/{newname}"
