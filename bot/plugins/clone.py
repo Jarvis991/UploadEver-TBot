@@ -4,6 +4,7 @@ from re import findall
 from requests import get as rget
 from config import LOGGER, USERS_API, Config
 from bot.client import Client
+import pyrogram
 from pyrogram import filters, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -59,14 +60,8 @@ async def _bulkCloneLinks(c: Client, m: Message):
         _txtLinks = rpyMSG.text
         _formatTxt = rpyMSG.entities
     _inlineKey = None
-    if hasattr(rpyMSG, 'inline_keyboard'):
-        rowBtn = []
-        for rows in rpyMSG.inline_keyboard:
-            clmBtn = []
-            for btn in rows:
-                clmBtn.append(InlineKeyboardButton(btn['text'], url=btn['url']))
-            rowBtn.extend([clmBtn])
-        _inlineKey = InlineKeyboardMarkup(rowBtn)
+    if hasattr(rpyMSG.reply_markup, 'inline_keyboard'):
+        _inlineKey = rpyMSG.reply_markup.inline_keyboard
 
     _retxt = findall(r'https?://uploadever\.in\S+', _txtLinks)
     
