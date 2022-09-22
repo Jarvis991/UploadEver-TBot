@@ -2,7 +2,7 @@
 
 import datetime
 import motor.motor_asyncio
-from configs import Config
+from configs import Config, LOGGER
 
 
 class Database:
@@ -30,7 +30,9 @@ class Database:
         return count
 
     async def _getAllUsers(self):
-        return self.col.find({})
+        dbData = self.col.find({})
+        LOGGER.info(dbData)
+        return dbData
 
     async def _deleteUser(self, user_id):
         await self.col.delete_many({'id': int(user_id)})
@@ -42,16 +44,9 @@ class Database:
         user = await self.col.find_one({'id': int(id)})
         return user.get('token', None)
 
-    #async def set_caption(self, id, caption):
-        #await self.col.update_one({'id': id}, {'$set': {'caption': caption}})
-
-    #async def get_caption(self, id):
-        #user = await self.col.find_one({'id': int(id)})
-        #return user.get('caption', None)
-
-    #async def get_user_data(self, id) -> dict:
-        #user = await self.col.find_one({'id': int(id)})
-        #return user or None
+    async def _getSingleUserData(self, id) -> dict:
+        user = await self.col.find_one({'id': int(id)})
+        return user or None
 
 
 db = Database(Config.MONGODB_URI, "UploadEver-TBot")
