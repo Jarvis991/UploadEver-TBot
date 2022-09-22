@@ -1,7 +1,7 @@
 #Copyright 2022-present, Authors: @AbirHasan2005 & 5MysterySD
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from config import Config, LOGGER, USERS_API
+from config import Config, LOGGER
 from bot.client import Client
 from pyrogram import enums
 from pyrogram.types import Message
@@ -11,12 +11,6 @@ class Database:
         self._client = AsyncIOMotorClient(uri)
         self.db = self._client[database_name]
         self.col = self.db.users
-
-    async def db_load(self):
-        all_users = await self._getAllUsers()
-        async for user in all_users:
-            USERS_API[user['id']] = user['token']
-        LOGGER.info('[MongoDB] User Data Imported from Database')
 
     def _newUser(self, id):
         return dict(
