@@ -2,8 +2,9 @@
 
 from re import findall
 from requests import get as rget
-from config import LOGGER, USERS_API, Config
+from config import LOGGER, Config
 from bot.client import Client
+from bot.core.db.db_func import db
 import pyrogram
 from pyrogram import filters, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
@@ -29,7 +30,7 @@ async def _cloneUploadEverLinks(c: Client, m: Message):
 
     Link = (m.text).strip()
     filecode = (Link.split("/"))[-1]
-    Token = USERS_API.get(m.chat.id, None)
+    Token = await db._getUserToken(m.chat.id)
     if Token is None: text_ = "<b>😬 I see, you have not Login, Do <i>/login</i> to Use this Command. </b>"
     else:
         resp = rget(f"https://uploadever.in/api/file/clone?file_code={filecode}&key={Token}")
@@ -66,7 +67,7 @@ async def _bulkCloneLinks(c: Client, m: Message):
     _retxt = findall(r'https?://uploadever\.in\S+', _txtLinks)
     
     LOGGER.info(f"[BULK] Clone Links : {len(_retxt)}")
-    Token = USERS_API.get(m.chat.id, None)
+    Token = await db._getUserToken(m.chat.id)
     if Token is None:
         await m.reply_text(text="<b>😬 I see, you have not Login, Do <i>/login</i> to Use this Command. </b>", parse_mode=enums.ParseMode.HTML, quote=True)
         return
