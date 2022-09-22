@@ -31,4 +31,6 @@ class Config:
     API_HASH = os.environ.get("API_HASH", "")
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
     DIRECTORY = os.environ.get("DIRECTORY", "downloads/")
-    OWNER_ID = int(os.environ.get("OWNER_ID", 1445283714))
+    ADMINS = list(set(int(x) for x in os.environ.get("ADMINS", "0").split()))
+    MONGODB_URI = os.environ.get("DATABASE_URL", "")
+    LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-100"))
