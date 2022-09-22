@@ -110,5 +110,5 @@ async def upload_file_handler(c: Client, m: Message):
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("📎 UploadEver URL", url=URL)]
         ])
-     )
-     oremove(_newFileName)
+    )
+    oremove(_newFileName)
