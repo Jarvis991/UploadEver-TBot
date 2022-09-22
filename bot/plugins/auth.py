@@ -48,9 +48,9 @@ async def logout_handler(c: Client, m: Message):
     :param token: Your Own API token of UploadEver.in
     '''
 
-    if not await db._isUserExists(m.from_user.id):
+    if not await db._getUserToken(m.from_user.id):
         text_ = "<b>😬 I see, you have not Login, Do <i>/login</i> to Use this Command. </b>"
     else:
-        await db._deleteUser(m.chat.id)
+        await db._setUserToken(m.chat.id, None)
         text_ = "<i>🥲 You Successfully Logout.</i> <b>Do /login to Come Again<b>"
     await m.reply_text(text=text_, parse_mode=enums.ParseMode.HTML, quote=True)
