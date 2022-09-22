@@ -1,16 +1,21 @@
 #Copyright 2022-present, Authors: @AbirHasan2005 & 5MysterySD
 
-import datetime
-import motor.motor_asyncio
-from config import Config, LOGGER
+from motor.motor_asyncio import AsyncIOMotorClient
+from config import Config, LOGGER, USERS_API
 from bot.client import Client
 from pyrogram.types import Message
 
 class Database:
     def __init__(self, uri, database_name):
-        self._client = motor.motor_asyncio.AsyncIOMotorClient(uri)
+        self._client = AsyncIOMotorClient(uri)
         self.db = self._client[database_name]
         self.col = self.db.users
+
+    def db_load(self):
+        all_users = await db._getAllUsers()
+        async for user in all_users:
+            USERS_API[user['id']] = user['token']
+        LOGGER.info('[MongoDB] User Data Imported from Database')
 
     def _newUser(self, id):
         return dict(
@@ -47,18 +52,14 @@ class Database:
         user = await self.col.find_one({'id': int(id)})
         return user or None
 
-
 db = Database(Config.MONGODB_URI, "UploadEver-TBot")
 
 async def _addNewUserToDB(c: Client, m: Message):
-    all_users = await db._getAllUsers()
-    async for user in all_users:
-        LOGGER.info(user['id'])
-    LOGGER.info(await db._isUserExists(m.from_user.id))
     if not await db._isUserExists(m.from_user.id):
         await db._addUser(m.from_user.id)
         if Config.LOG_CHANNEL is not None:
             await c.send_message(
                 int(Config.LOG_CHANNEL),
-                f"#NEW_USER: \n\nNew User [{m.from_user.first_name}](tg://user?id={m.from_user.id}) !!"
+                f"#NEW_USER: \n\nNew User : {m.from_user.mention}\nUser ID : {m.from_user.id} !!",
+                parse_mode=enums.ParseMode.HTML
             )
