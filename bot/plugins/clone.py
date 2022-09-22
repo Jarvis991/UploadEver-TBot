@@ -61,7 +61,7 @@ async def _bulkCloneLinks(c: Client, m: Message):
         _formatTxt = rpyMSG.entities
     _inlineKey = None
     if hasattr(rpyMSG.reply_markup, 'inline_keyboard'):
-        _inlineKey = rpyMSG.reply_markup.inline_keyboard
+        _inlineKey = InlineKeyboardMarkup(rpyMSG.reply_markup.inline_keyboard)
 
     _retxt = findall(r'https?://uploadever\.in\S+', _txtLinks)
     
@@ -83,7 +83,3 @@ async def _bulkCloneLinks(c: Client, m: Message):
         await rpyMSG.copy(chat_id=m.chat.id, caption=_txtLinks, caption_entities=_formatTxt, reply_markup=_inlineKey)
     else: 
         await m.reply_text(_txtLinks, entities=_formatTxt, quote=True, disable_web_page_preview=True, reply_markup=_inlineKey)
-
-
-
-
