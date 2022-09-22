@@ -13,7 +13,7 @@ async def _loginUploadEver(c: Client, m: Message):
     :param token: Your Own API token of UploadEver.in
     '''
     
-    if await db._getUserToken(m.chat.id) is None:
+    if await db._getUserToken(m.chat.id) is not None:
         await m.reply_text(text="<b>😑 You have Already Login,</b> <i>If you want to Logout, Use /logout</i>", parse_mode=enums.ParseMode.HTML, quote=True)
         return
     auth_msg = await m.reply_text(text="🖨 <b>Bot Authorization:</b> \n\n<i>You can Get/Generate/Copy API Token from https://uploadever.in/?op=my_account</i>", parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True, reply_markup=ForceReply(True, "Enter UploadEver.in API Key"))
@@ -48,7 +48,7 @@ async def logout_handler(c: Client, m: Message):
     :param token: Your Own API token of UploadEver.in
     '''
 
-    if not await db._getUserToken(m.from_user.id):
+    if await db._getUserToken(m.from_user.id) is None:
         text_ = "<b>😬 I see, you have not Login, Do <i>/login</i> to Use this Command. </b>"
     else:
         await db._setUserToken(m.chat.id, None)
