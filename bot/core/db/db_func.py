@@ -3,7 +3,8 @@
 import datetime
 import motor.motor_asyncio
 from config import Config, LOGGER
-
+from bot.client import Client
+from pyrogram.types import Message
 
 class Database:
     def __init__(self, uri, database_name):
