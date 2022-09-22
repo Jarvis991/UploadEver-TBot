@@ -6,8 +6,9 @@ from os import path as opath, remove as oremove, rename as orename
 from subprocess import check_output
 from asyncio import sleep as asleep
 from requests import get as rget
-from config import LOGGER, USERS_API, Config
+from config import LOGGER, Config
 from bot.client import Client
+from bot.core.db.db_func import db
 from bot.core.display import convertBytes
 from bot.core.progress import progress_for_pyrogram
 from pyrogram import filters, enums
@@ -39,7 +40,7 @@ async def upload_file_handler(c: Client, m: Message):
     ]
     '''
 
-    Token = USERS_API.get(m.chat.id, None)
+    Token = await db._getUserToken(m.chat.id)
     if Token is None: 
         await m.reply_text("<b>😬 I see, you have not Login, Do <i>/login</i> to Use this Command. </b>",  quote=True, parse_mode=enums.ParseMode.HTML)
         return
