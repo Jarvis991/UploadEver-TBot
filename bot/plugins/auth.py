@@ -1,18 +1,19 @@
 #Copyright 2022-present, Author: 5MysterySD
 
 from requests import get as rget
-from config import LOGGER, USERS_API
+from config import LOGGER
 from bot.client import Client
+from bot.core.db.db_func import db
 from pyrogram import filters, enums
 from pyrogram.types import Message, ForceReply
 
 @Client.on_message(filters.command("login") & filters.private)
-async def login_handler(c: Client, m: Message):
+async def _loginUploadEver(c: Client, m: Message):
     ''' Login Into Bot to Use Bot Features
     :param token: Your Own API token of UploadEver.in
     '''
 
-    if m.chat.id in USERS_API.keys():
+    if await db._isUserExists(m.from_user.id):
         await m.reply_text(text="<b>😑 You have Already Login,</b> <i>If you want to Logout, Use /logout</i>", parse_mode=enums.ParseMode.HTML, quote=True)
         return
     auth_msg = await m.reply_text(text="🖨 <b>Bot Authorization:</b> \n\n<i>You can Get/Generate/Copy API Token from https://uploadever.in/?op=my_account</i>", parse_mode=enums.ParseMode.HTML, disable_web_page_preview=True, reply_markup=ForceReply(True, "Enter UploadEver.in API Key"))
@@ -32,7 +33,7 @@ async def login_handler(c: Client, m: Message):
         resp = rget(f"https://uploadever.in/api/account/info?key={Token}")
         jdata = resp.json()
         if jdata["status"] == 200:
-            USERS_API[m.chat.id] = Token
+            await db._setUserToken(m.chat.id, Token)
             LOGGER.info(f"[UploadEver.in] User: {m.chat.id} Log In Success")
             txt = f"<i>{jdata['result']['email']} Successfully Logged In ✅️!!</i>"
         else:
@@ -48,8 +49,8 @@ async def logout_handler(c: Client, m: Message):
     '''
 
     try:
-        USERS_API.pop(m.chat.id)
+        await db._deleteUser(m.chat.id)
         text_ = "<i>🥲 You Successfully Logout.</i> <b>Do /login to Come Again<b>"
-    except KeyError:
+    except Exception:
         text_ = "<b>😬 I see, you have not Login, Do <i>/login</i> to Use this Command. </b>"
     await m.reply_text(text=text_, parse_mode=enums.ParseMode.HTML, quote=True)
