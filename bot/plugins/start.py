@@ -1,5 +1,8 @@
 #Copyright 2022-present, Author: 5MysterySD
 
+from time import time
+from config import BOT_UPTIME
+from bot.core.display import convertTime
 from bot.client import Client
 from pyrogram import filters, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
@@ -50,7 +53,8 @@ async def cb_handlers(c: Client, cb: CallbackQuery):
 /login To Login
 /logout To Logout from here
 /stats to get account stats/earning/space/etc information
-/supportedlinks to check supported links that can be converted to uploadever
+/bulklinks to check supported links that can be converted to uploadever
+
 Send Any File or media to directly Upload !!</i>''',
             parse_mode=enums.ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup([
@@ -58,9 +62,9 @@ Send Any File or media to directly Upload !!</i>''',
                 ])
         )
     elif cb.data == "upstats":
-        await cb.message.edit(text='''Bot Stats:
+        await cb.message.edit(text=f'''Bot Stats:
         
-Bot Uptime : 
+Bot Uptime : {convertTime(time() - BOT_UPTIME)}
 Today Stats:
 Files Uploaded:
 
