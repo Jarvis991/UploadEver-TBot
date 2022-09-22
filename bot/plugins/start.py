@@ -64,7 +64,7 @@ Send Any File or media to directly Upload !!</i>''',
     elif cb.data == "upstats":
         await cb.message.edit(text=f'''Bot Stats:
         
-Bot Uptime : {convertTime(time() - BOT_UPTIME)}
+Bot Uptime : {convertTime((time() - BOT_UPTIME)*1000)}
 Today Stats:
 Files Uploaded:
 
