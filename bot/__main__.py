@@ -1,4 +1,7 @@
-import bot
+from bot import bot
+from bot.core.db.db_func import db
 
 if __name__ == "__main__":
-    bot.bot.run()
+
+    db.db_load()
+    bot.run()
