@@ -50,3 +50,12 @@ class Database:
 
 
 db = Database(Config.MONGODB_URI, "UploadEver-TBot")
+
+async def _addNewUserToDB(c: Client, m: Message):
+    if not await db._isUserExists(m.from_user.id):
+        await db._addUser(m.from_user.id)
+        if Config.LOG_CHANNEL is not None:
+            await c.send_message(
+                int(Config.LOG_CHANNEL),
+                f"#NEW_USER: \n\nNew User [{m.from_user.first_name}](tg://user?id={cmd.from_user.id}) !!"
+            )
