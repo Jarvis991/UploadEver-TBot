@@ -1,7 +1,16 @@
+# <!-- Bot Utils -->
 pyrogram
 TgCrypto
 pyromod
+
+# <!-- Config -->
 python-dotenv
+
+# <!-- API -->
 requests
 psutil
+
+# <!-- Database -->
+dnspython
 motor
+
