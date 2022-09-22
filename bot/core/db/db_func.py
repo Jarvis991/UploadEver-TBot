@@ -11,7 +11,7 @@ class Database:
         self.db = self._client[database_name]
         self.col = self.db.users
 
-    def db_load(self):
+    async def db_load(self):
         all_users = await db._getAllUsers()
         async for user in all_users:
             USERS_API[user['id']] = user['token']
